@@ -1,6 +1,7 @@
 const express = require('express');
 const isAuthenticated = require('../middleware/isAuthenticated');
-const controller = require('../controllers/mainController'); // Import the controller
+const controller = require('../controllers/mainController');
+const fileUploadController = require('../controllers/fileUploadController');
 const multer = require('multer');
 const router = express.Router();
 const fs = require('fs');
@@ -29,17 +30,31 @@ router.get('/signup', controller.getSignupPage); // Render sign-up page
 router.post('/signup', controller.signupUser); // Handle sign-up
 router.post('/login', controller.loginUser); // Handle login
 
-// Secure file storage route
-router.get('/files', isAuthenticated, controller.getFilesPage);
-router.post(
-    '/upload',
-    isAuthenticated,
-    upload.single('file'),
-    controller.uploadFile
-);
-
 // Logout route
 router.get('/logout', controller.logoutUser);
+
+// File routes
+
+router.get('/files/:folder?', isAuthenticated, fileUploadController.listFiles); // Optional parameter for folder name
+
+// Route to create a new folder
+router.post(
+    '/files/create-folder',
+    isAuthenticated,
+    fileUploadController.createFolder
+);
+
+// Route to upload a file to the current folder
+router.post(
+    '/files/:folder/upload',
+    isAuthenticated,
+    fileUploadController.uploadFile
+);
+
+router.get('/files', isAuthenticated, (req, res) => {
+    const uploadedFiles = fs.readdirSync('uploads/');
+    res.render('files', { uploadedFiles, errorMessage: null });
+});
 
 // Session test routes
 router.get('/set-session', controller.setSessionData);

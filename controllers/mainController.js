@@ -53,21 +53,6 @@ exports.loginUser = (req, res, next) => {
     })(req, res, next);
 };
 
-// Controller for rendering the file storage page (secured route)
-exports.getFilesPage = (req, res) => {
-    const uploadedFiles = fs.readdirSync('uploads/');
-    res.render('files', { uploadedFiles, errorMessage: null });
-};
-
-exports.uploadFile = (req, res) => {
-    if (!req.file) {
-        return res.redirect('/files?error=No file uploaded');
-    }
-
-    // After upload, redirect back to the files page
-    res.redirect('/files');
-};
-
 // Controller for logging out
 exports.logoutUser = (req, res) => {
     req.logout((err) => {

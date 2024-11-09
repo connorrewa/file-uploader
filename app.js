@@ -7,6 +7,7 @@ const PrismaSessionStore =
     require('@quixo3/prisma-session-store').PrismaSessionStore;
 const bcrypt = require('bcrypt');
 const router = require('./routes/router');
+const path = require('path');
 
 const prisma = new PrismaClient();
 const app = express();
@@ -17,6 +18,8 @@ app.set('views', './views');
 // Middleware for parsing JSON and form data
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(express.static(path.join(__dirname, 'uploads')));
 
 // Initialize session with Prisma session store
 app.use(
@@ -77,6 +80,10 @@ passport.deserializeUser(async (id, done) => {
     } catch (error) {
         done(error, null);
     }
+});
+
+app.get('/', (req, res) => {
+    res.redirect('/login');
 });
 
 app.use(router);
