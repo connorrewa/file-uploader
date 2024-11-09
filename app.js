@@ -6,9 +6,13 @@ const PrismaClient = require('@prisma/client').PrismaClient;
 const PrismaSessionStore =
     require('@quixo3/prisma-session-store').PrismaSessionStore;
 const bcrypt = require('bcrypt');
+const router = require('./routes/router');
 
 const prisma = new PrismaClient();
 const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
 // Middleware for parsing JSON and form data
 app.use(express.json());
@@ -17,11 +21,11 @@ app.use(express.urlencoded({ extended: true }));
 // Initialize session with Prisma session store
 app.use(
     session({
-        secret: process.env.SESSION_SECRET, // Replace with your secret
+        secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
         store: new PrismaSessionStore(prisma, {
-            checkPeriod: 2 * 60 * 1000, // Check session expiration every 2 minutes
+            checkPeriod: 2 * 60 * 1000,
             dbRecordIdIsSessionId: true,
             dbRecordIdFunction: undefined,
         }),
@@ -75,45 +79,7 @@ passport.deserializeUser(async (id, done) => {
     }
 });
 
-// Routes
-app.post(
-    '/login',
-    passport.authenticate('local', {
-        successRedirect: '/files',
-        failureRedirect: '/login',
-        failureFlash: true,
-    })
-);
-
-app.get('/files', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.send('Welcome to your file storage!');
-    } else {
-        res.redirect('/login');
-    }
-});
-
-app.get('/logout', (req, res) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-        res.redirect('/login');
-    });
-});
-
-app.get('/set-session', (req, res) => {
-    req.session.username = 'testuser';
-    res.send('Session data set.');
-});
-
-app.get('/get-session', (req, res) => {
-    if (req.session.username) {
-        res.send(`Session data: ${req.session.username}`);
-    } else {
-        res.send('No session data found.');
-    }
-});
+app.use(router);
 
 // Start server
 const PORT = process.env.PORT || 3000;
