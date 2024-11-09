@@ -45,11 +45,7 @@ router.post(
 );
 
 // Route to upload a file to the current folder
-router.post(
-    '/files/:folder/upload',
-    isAuthenticated,
-    fileUploadController.uploadFile
-);
+router.post('/files/upload', isAuthenticated, fileUploadController.uploadFile);
 
 router.get('/files', isAuthenticated, (req, res) => {
     const uploadedFiles = fs.readdirSync('uploads/');

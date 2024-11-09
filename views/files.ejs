@@ -6,7 +6,10 @@
         <title>File Management</title>
     </head>
     <body>
-        <h1>Files in <%= currentFolder || 'Root' %> folder</h1>
+        <h1>
+            <% if (currentFolder) { %> Files in <%= currentFolder %> folder <% }
+            else { %> Your files <% } %>
+        </h1>
 
         <form action="/files/create-folder" method="POST">
             <input
@@ -18,7 +21,7 @@
             <button type="submit">Create Folder</button>
         </form>
         <form
-            action="/files/<%= currentFolder %>/upload"
+            action="/files/upload"
             method="POST"
             enctype="multipart/form-data"
         >
