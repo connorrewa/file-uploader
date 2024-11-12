@@ -7,45 +7,71 @@
     </head>
     <body>
         <h1>
-            <% if (currentFolder) { %> Files in <%= currentFolder %> folder <% }
-            else { %> Your files <% } %>
+            <% if (folder) { %> Files in <%= folder.name %> <% } else { %> Your
+            files <% } %>
         </h1>
 
+        <!-- Create Folder Form -->
         <form action="/files/create-folder" method="POST">
             <input
                 type="text"
-                name="folderName"
+                name="name"
                 placeholder="Enter folder name"
                 required
             />
+            <input
+                type="hidden"
+                name="parentFolderId"
+                value="<%= folder ? folder.id : '' %>"
+            />
             <button type="submit">Create Folder</button>
         </form>
+
+        <!-- Upload File Form -->
         <form
             action="/files/upload"
             method="POST"
             enctype="multipart/form-data"
         >
             <input type="file" name="file" required />
+            <input
+                type="hidden"
+                name="folderId"
+                value="<%= folder ? folder.id : '' %>"
+            />
             <button type="submit">Upload File</button>
         </form>
 
-        <h2>Folders:</h2>
         <ul>
-            <% folders.forEach(function(folder) { %>
+            <% subfolders.forEach(function(folder) { %>
             <li>
                 <a
-                    href="/files/<%= currentFolder ? currentFolder + '/' + folder : folder %>"
+                    href="/files/<%= folder.parentFolderId ? folder.parentFolderId + '/' + folder.id : folder.id %>"
                 >
-                    <%= folder %>
+                    <%= folder.name %>
                 </a>
+                <!-- Add a delete button for each folder -->
+                <form
+                    action="/files/delete/<%= folder.id %>"
+                    method="POST"
+                    style="display: inline"
+                >
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button type="submit">Delete</button>
+                </form>
             </li>
             <% }) %>
         </ul>
 
+        <!-- Display Files in the Current Folder -->
         <h2>Files:</h2>
         <ul>
-            <% uploadedFiles.forEach(function(file) { %>
-            <li><%= file %></li>
+            <% files.forEach(function(file) { %>
+            <li>
+                <a href="/files/<%= file.id %>"><%= file.name %></a>
+                - <%= file.size %> bytes - Uploaded on <%=
+                file.uploadedAt.toDateString() %>
+            </li>
             <% }) %>
         </ul>
 

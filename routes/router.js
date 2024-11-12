@@ -35,7 +35,8 @@ router.get('/logout', controller.logoutUser);
 
 // File routes
 
-router.get('/files/:folder?', isAuthenticated, fileUploadController.listFiles); // Optional parameter for folder name
+// Express route to handle nested folder paths
+router.get('/files/*', isAuthenticated, fileUploadController.getFolder);
 
 // Route to create a new folder
 router.post(
@@ -47,10 +48,15 @@ router.post(
 // Route to upload a file to the current folder
 router.post('/files/upload', isAuthenticated, fileUploadController.uploadFile);
 
-router.get('/files', isAuthenticated, (req, res) => {
-    const uploadedFiles = fs.readdirSync('uploads/');
-    res.render('files', { uploadedFiles, errorMessage: null });
-});
+router.get('/files', isAuthenticated, fileUploadController.getFolder);
+
+router.post(
+    '/files/delete/:folderId',
+    isAuthenticated,
+    fileUploadController.deleteFolder
+);
+
+//router.get('/folders', isAuthenticated, fileUploadController.listFolders);
 
 // Session test routes
 router.get('/set-session', controller.setSessionData);

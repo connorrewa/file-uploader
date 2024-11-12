@@ -13,17 +13,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
+  Folder    Folder[]
+  File      File[]
 }
 
 model Session {
   id        String   @id
   sid       String   @unique
   data      String   @db.Text
-  expiresAt   DateTime
+  expiresAt DateTime
+}
+
+model Folder {
+  id             Int      @id @default(autoincrement())
+  name           String
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+  parentFolderId Int?     // optional
+  parentFolder   Folder?  @relation("Subfolders", fields: [parentFolderId], references: [id])
+  subfolders     Folder[] @relation("Subfolders")
+  files          File[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model File {
+  id        Int      @id @default(autoincrement())
+  name      String
+  size      Int
+  folderId  Int
+  folder    Folder   @relation(fields: [folderId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  url       String
+  createdAt DateTime @default(now())
 }
