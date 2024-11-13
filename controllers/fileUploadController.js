@@ -1,7 +1,14 @@
 const path = require('path');
 const fs = require('fs');
 const { PrismaClient } = require('@prisma/client');
+const { createClient } = require('@supabase/supabase-js');
 const prisma = new PrismaClient();
+const { v4: uuidv4 } = require('uuid');
+
+const supabase = createClient(
+    process.env.SUPABASE_URL,
+    process.env.SUPABASE_KEY
+);
 
 // Middleware to create folder if it doesn't exist
 const createFolderIfNotExists = (folderPath) => {
@@ -195,29 +202,52 @@ exports.deleteFolder = async (req, res) => {
     }
 };
 
-// Handle file upload
-exports.uploadFile = (req, res) => {
-    const currentFolder = req.params.folder || ''; // Current folder path
-    const uploadPath = path.join(__dirname, '..', 'uploads', currentFolder); // Full path to the folder
+exports.uploadFile = async (req, res) => {
+    const { folderId } = req.body;
+    const userId = req.user.id;
+    const file = req.files?.file;
 
-    // Ensure the folder exists
-    createFolderIfNotExists(uploadPath);
+    if (!file) {
+        return res.status(400).json({ error: 'No file provided' });
+    }
 
-    const multer = require('multer');
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, uploadPath); // Save the file in the folder
-        },
-        filename: function (req, file, cb) {
-            cb(null, Date.now() + path.extname(file.originalname)); // Unique filename based on timestamp
-        },
-    });
+    try {
+        // Create unique path for the file in Supabase
+        const filePath = `${userId}/${uuidv4()}`;
 
-    const upload = multer({ storage: storage }).single('file'); // Handle single file upload
-    upload(req, res, function (err) {
-        if (err) {
-            return res.status(500).send('Error uploading file');
+        // Upload file to Supabase storage bucket
+        const { data, error } = await supabase.storage
+            .from('user-files')
+            .upload(filePath, file.buffer, {
+                cacheControl: '3600',
+                upsert: false,
+                contentType: file.mimetype,
+            });
+
+        if (error) {
+            console.error('Error uploading file to Supabase:', error);
+            return res.status(500).json({ error: 'Failed to upload file' });
         }
-        res.redirect(`/files/${currentFolder}`); // Redirect to the current folder page after upload
-    });
+
+        // Get public URL of the uploaded file
+        const { publicUrl } = supabase.storage
+            .from('user-file')
+            .getPublicUrl(filePath);
+
+        // Save file metadata to your database
+        const savedFile = await prisma.file.create({
+            data: {
+                name: file.originalname,
+                size: file.size,
+                url: publicUrl, // Save Supabase file URL
+                userId,
+                folderId: folderId ? Number(folderId) : null,
+            },
+        });
+
+        res.redirect(`/files/${folderId || ''}`);
+    } catch (error) {
+        console.error('Error saving file metadata:', error);
+        res.status(500).json({ error: 'Failed to save file metadata' });
+    }
 };

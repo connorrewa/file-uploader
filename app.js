@@ -8,9 +8,12 @@ const PrismaSessionStore =
 const bcrypt = require('bcrypt');
 const router = require('./routes/router');
 const path = require('path');
+const fileUpload = require('express-fileupload');
 
 const prisma = new PrismaClient();
 const app = express();
+
+app.use(fileUpload());
 
 app.set('view engine', 'ejs');
 app.set('views', './views');

@@ -46,8 +46,8 @@ model File {
   id        Int      @id @default(autoincrement())
   name      String
   size      Int
-  folderId  Int
-  folder    Folder   @relation(fields: [folderId], references: [id])
+  folderId  Int?     // Make folderId optional to allow root-level files
+  folder    Folder?  @relation(fields: [folderId], references: [id]) // Make folder relation optional
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   url       String
