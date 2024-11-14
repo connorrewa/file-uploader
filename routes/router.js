@@ -45,10 +45,15 @@ router.post(
     fileUploadController.createFolder
 );
 
-// Route to upload a file to the current folder
-router.post('/files/upload', isAuthenticated, fileUploadController.uploadFile);
-
 router.get('/files', isAuthenticated, fileUploadController.getFolder);
+
+// Route to upload a file to the current folder
+router.post(
+    '/files/upload',
+    isAuthenticated,
+    upload.single('file'),
+    fileUploadController.uploadFile
+);
 
 router.post(
     '/files/delete/:folderId',

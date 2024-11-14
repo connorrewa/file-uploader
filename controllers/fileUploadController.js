@@ -4,18 +4,19 @@ const { PrismaClient } = require('@prisma/client');
 const { createClient } = require('@supabase/supabase-js');
 const prisma = new PrismaClient();
 const { v4: uuidv4 } = require('uuid');
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
 
 const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_KEY
 );
 
-// Middleware to create folder if it doesn't exist
-const createFolderIfNotExists = (folderPath) => {
-    if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath, { recursive: true });
-    }
-};
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 exports.viewFiles = async (req, res) => {
     const currentFolderId = req.params.folderId || null; // Default to root if no folder ID is provided
@@ -205,47 +206,46 @@ exports.deleteFolder = async (req, res) => {
 exports.uploadFile = async (req, res) => {
     const { folderId } = req.body;
     const userId = req.user.id;
-    const file = req.files?.file;
 
-    if (!file) {
+    if (!req.file) {
         return res.status(400).json({ error: 'No file provided' });
     }
 
+    const file = req.file;
+
     try {
-        // Create unique path for the file in Supabase
-        const filePath = `${userId}/${uuidv4()}`;
-
-        // Upload file to Supabase storage bucket
-        const { data, error } = await supabase.storage
-            .from('user-files')
-            .upload(filePath, file.buffer, {
-                cacheControl: '3600',
-                upsert: false,
-                contentType: file.mimetype,
-            });
-
-        if (error) {
-            console.error('Error uploading file to Supabase:', error);
-            return res.status(500).json({ error: 'Failed to upload file' });
-        }
-
-        // Get public URL of the uploaded file
-        const { publicUrl } = supabase.storage
-            .from('user-file')
-            .getPublicUrl(filePath);
-
-        // Save file metadata to your database
-        const savedFile = await prisma.file.create({
-            data: {
-                name: file.originalname,
-                size: file.size,
-                url: publicUrl, // Save Supabase file URL
-                userId,
-                folderId: folderId ? Number(folderId) : null,
+        // Upload file to Cloudinary
+        cloudinary.uploader.upload(
+            file.path,
+            {
+                folder: `user_files/${userId}`, // Organize by user
+                resource_type: 'auto', // Automatically detect the file type
             },
-        });
+            async (error, result) => {
+                if (error) {
+                    console.error('Cloudinary upload error:', error);
+                    return res
+                        .status(500)
+                        .json({ error: 'File upload failed' });
+                }
 
-        res.redirect(`/files/${folderId || ''}`);
+                // Save the file metadata (Cloudinary URL) to your database
+                const savedFile = await prisma.file.create({
+                    data: {
+                        name: file.originalname,
+                        size: file.size,
+                        url: result.secure_url, // Cloudinary URL
+                        userId,
+                        folderId: folderId ? Number(folderId) : null, // Optional folderId
+                    },
+                });
+
+                // Clean up the local file after uploading to Cloudinary
+                fs.unlinkSync(file.path);
+
+                res.redirect(`/files/${folderId || ''}`);
+            }
+        );
     } catch (error) {
         console.error('Error saving file metadata:', error);
         res.status(500).json({ error: 'Failed to save file metadata' });
