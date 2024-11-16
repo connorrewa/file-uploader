@@ -9,17 +9,29 @@
         <h1>File Details</h1>
         <ul>
             <li><strong>Name:</strong> <%= file.name %></li>
-            <li><strong>Size:</strong> <%= fileSizeInMB %> MB</li>
             <li>
-                <strong>Upload Time:</strong> <%=
+                <strong>Size:</strong> <%= (file.size / 1024 / 1024).toFixed(2)
+                %> MB
+            </li>
+            <li>
+                <strong>Uploaded At:</strong> <%=
                 file.createdAt.toLocaleString() %>
             </li>
         </ul>
 
-        <!-- Download Link -->
-        <a href="<%= downloadUrl %>" download>Download File</a>
-
-        <br />
-        <a href="/files">Back to Files</a>
+        <% if (isImage) { %>
+        <h2>Image Preview</h2>
+        <img
+            src="<%= file.url %>"
+            alt="<%= file.name %>"
+            style="max-width: 100%; height: auto"
+        />
+        <% } %>
+        <form action="/files/details/download/<%= file.id %>" method="GET">
+            <button type="submit">Download File</button>
+        </form>
+        <div>
+            <a href="javascript:history.back()">Back</a>
+        </div>
     </body>
 </html>

@@ -2,7 +2,7 @@ const express = require('express');
 const isAuthenticated = require('../middleware/isAuthenticated');
 const controller = require('../controllers/mainController');
 const fileUploadController = require('../controllers/fileUploadController');
-const fileController = require('../controllers/fileController');
+const fileDetailsController = require('../controllers/fileDetailsController');
 const multer = require('multer');
 const router = express.Router();
 const fs = require('fs');
@@ -61,7 +61,13 @@ router.post(
 
 //router.get('/folders', isAuthenticated, fileUploadController.listFolders);
 
-router.get('/files/details/:fileId', fileController.fileDetails);
+router.get('/files/details/:fileId', fileDetailsController.fileDetails);
+
+router.get(
+    '/files/details/download/:fileId',
+    isAuthenticated,
+    fileDetailsController.downloadFile
+);
 
 // Express route to handle nested folder paths
 router.get('/files/*', isAuthenticated, fileUploadController.getFolder);

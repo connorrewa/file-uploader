@@ -7,8 +7,8 @@
     </head>
     <body>
         <h1>
-            <% if (folder) { %> Files in <%= folder.name %> <% } else { %> Your
-            files <% } %>
+            <% if (currentFolder) { %> Files in <%= currentFolder.name %> <% }
+            else { %> Your files <% } %>
         </h1>
 
         <!-- Create Folder Form -->
@@ -22,7 +22,7 @@
             <input
                 type="hidden"
                 name="parentFolderId"
-                value="<%= folder ? folder.id : '' %>"
+                value="<%= currentFolder ? currentFolder.id : '' %>"
             />
             <button type="submit">Create Folder</button>
         </form>
@@ -37,13 +37,13 @@
             <input
                 type="hidden"
                 name="folderId"
-                value="<%= folder ? folder.id : '' %>"
+                value="<%= currentFolder ? currentFolder.id : '' %>"
             />
             <button type="submit">Upload File</button>
         </form>
 
         <ul>
-            <% subfolders.forEach(function(folder) { %>
+            <% folders.forEach(function(folder) { %>
             <li>
                 <a
                     href="/files/<%= folder.parentFolderId ? folder.parentFolderId + '/' + folder.id : folder.id %>"

@@ -49,7 +49,7 @@ exports.viewFiles = async (req, res) => {
         });
 
         // Render the template with folders, files, and current folder data
-        res.render('files', { folders, uploadedFiles, currentFolder });
+        res.render('files', { folders, files: uploadedFiles, currentFolder });
     } catch (error) {
         console.error('Error fetching files and folders:', error);
         res.status(500).json({ error: 'Failed to retrieve files and folders' });
@@ -82,6 +82,7 @@ exports.createFolder = async (req, res) => {
         res.status(500).json({ error: 'Failed to create folder' });
     }
 };
+
 exports.getFolder = async (req, res) => {
     const userId = req.user.id;
 
@@ -141,14 +142,14 @@ exports.getFolder = async (req, res) => {
         const files = await prisma.file.findMany({
             where: {
                 userId,
-                folderId: currentFolderId || undefined, // Null for root folder
+                folderId: currentFolderId === null ? null : currentFolderId,
             },
         });
 
         // Render the folder's page with subfolders and files
         res.render('files', {
-            folder: currentFolder, // Ensure the current folder is passed to the view
-            subfolders,
+            currentFolder, // Ensure the current folder is passed to the view
+            folders: subfolders,
             files,
         });
     } catch (error) {
