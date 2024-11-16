@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>File Details</title>
+    </head>
+    <body>
+        <h1>File Details</h1>
+        <ul>
+            <li><strong>Name:</strong> <%= file.name %></li>
+            <li><strong>Size:</strong> <%= fileSizeInMB %> MB</li>
+            <li>
+                <strong>Upload Time:</strong> <%=
+                file.createdAt.toLocaleString() %>
+            </li>
+        </ul>
+
+        <!-- Download Link -->
+        <a href="<%= downloadUrl %>" download>Download File</a>
+
+        <br />
+        <a href="/files">Back to Files</a>
+    </body>
+</html>

@@ -2,6 +2,7 @@ const express = require('express');
 const isAuthenticated = require('../middleware/isAuthenticated');
 const controller = require('../controllers/mainController');
 const fileUploadController = require('../controllers/fileUploadController');
+const fileController = require('../controllers/fileController');
 const multer = require('multer');
 const router = express.Router();
 const fs = require('fs');
@@ -35,9 +36,6 @@ router.get('/logout', controller.logoutUser);
 
 // File routes
 
-// Express route to handle nested folder paths
-router.get('/files/*', isAuthenticated, fileUploadController.getFolder);
-
 // Route to create a new folder
 router.post(
     '/files/create-folder',
@@ -62,6 +60,11 @@ router.post(
 );
 
 //router.get('/folders', isAuthenticated, fileUploadController.listFolders);
+
+router.get('/files/details/:fileId', fileController.fileDetails);
+
+// Express route to handle nested folder paths
+router.get('/files/*', isAuthenticated, fileUploadController.getFolder);
 
 // Session test routes
 router.get('/set-session', controller.setSessionData);

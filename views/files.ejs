@@ -68,9 +68,7 @@
         <ul>
             <% files.forEach(function(file) { %>
             <li>
-                <a href="<%= file.url %>"><%= file.name %></a>
-                - <%= file.size %> bytes - Uploaded on <%=
-                file.createdAt.toDateString() %>
+                <a href="/files/details/<%= file.id %>"><%= file.name %></a>
             </li>
             <% }) %>
         </ul>
