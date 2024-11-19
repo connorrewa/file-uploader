@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'uploads')));
 // Initialize session with Prisma session store
 app.use(
     session({
-        secret: process.env.SESSION_SECRET,
+        secret: 'cats', // Provide the secret option here
         resave: false,
         saveUninitialized: false,
         store: new PrismaSessionStore(prisma, {

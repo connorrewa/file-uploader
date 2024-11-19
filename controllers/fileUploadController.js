@@ -7,10 +7,10 @@ const { v4: uuidv4 } = require('uuid');
 const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 
-const supabase = createClient(
+/* const supabase = createClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_KEY
-);
+); */
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -225,6 +225,8 @@ exports.uploadFile = async (req, res) => {
             async (error, result) => {
                 if (error) {
                     console.error('Cloudinary upload error:', error);
+                    // Clean up the local file path in case of an error
+                    fs.unlinkSync(file.path);
                     return res
                         .status(500)
                         .json({ error: 'File upload failed' });
@@ -249,6 +251,8 @@ exports.uploadFile = async (req, res) => {
         );
     } catch (error) {
         console.error('Error saving file metadata:', error);
+        // Clean up the local file in case of an error
+        fs.unlinkSync(file.path);
         res.status(500).json({ error: 'Failed to save file metadata' });
     }
 };
