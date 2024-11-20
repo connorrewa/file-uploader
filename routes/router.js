@@ -59,6 +59,12 @@ router.post(
     fileUploadController.deleteFolder
 );
 
+router.post(
+    '/files/delete-file/:fileId',
+    isAuthenticated,
+    fileUploadController.deleteFile
+);
+
 //router.get('/folders', isAuthenticated, fileUploadController.listFolders);
 
 router.get('/files/details/:fileId', fileDetailsController.fileDetails);

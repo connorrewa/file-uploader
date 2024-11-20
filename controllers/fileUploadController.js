@@ -204,6 +204,33 @@ exports.deleteFolder = async (req, res) => {
     }
 };
 
+exports.deleteFile = async (req, res) => {
+    const fileId = req.params.fileId; // File ID from the URL parameter
+    const userId = req.user.id; // Authenticated user's ID
+
+    try {
+        // Check if the file exists and belongs to the current user
+        const file = await prisma.file.findUnique({
+            where: { id: Number(fileId), userId },
+        });
+
+        if (!file) {
+            return res
+                .status(404)
+                .json({ error: 'File not found or unauthorized' });
+        }
+
+        // Delete the file from the database
+        await prisma.file.delete({
+            where: { id: Number(fileId) },
+        });
+
+        res.redirect(`/files/${file.folderId || ''}`);
+    } catch (error) {
+        console.error('Error deleting file:', error);
+    }
+};
+
 exports.uploadFile = async (req, res) => {
     const { folderId } = req.body;
     const userId = req.user.id;

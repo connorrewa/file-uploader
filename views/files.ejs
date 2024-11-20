@@ -69,6 +69,15 @@
             <% files.forEach(function(file) { %>
             <li>
                 <a href="/files/details/<%= file.id %>"><%= file.name %></a>
+                <!-- Add a delete button for each file -->
+                <form
+                    action="/files/delete-file/<%= file.id %>"
+                    method="POST"
+                    style="display: inline"
+                >
+                    <input type="hidden" name="_method" value="DELETE" />
+                    <button type="submit">Delete</button>
+                </form>
             </li>
             <% }) %>
         </ul>
