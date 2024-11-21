@@ -2,45 +2,99 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <link href="/css/tailwind.css" rel="stylesheet" />
         <title>Sign Up</title>
     </head>
-    <body>
-        <h1>Sign Up</h1>
-        <% if (errorMessage) { %>
-        <p style="color: red"><%= errorMessage %></p>
-        <% } %>
-        <form
-            action="/signup"
-            method="POST"
-            onsubmit="return validatePasswords()"
-        >
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required />
+    <body class="font-body">
+        <%- include('partials/navbar', { currentUser: currentUser }) %>
+        <section class="bg-gray-50">
+            <div
+                class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+            >
+                <div
+                    class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0"
+                >
+                    <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                        <h1
+                            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl"
+                        >
+                            Sign up for an account
+                        </h1>
+                        <% if (errorMessage) { %>
+                        <div class="mt-2">
+                            <p class="text-red-500"><%= errorMessage %></p>
+                        </div>
+                        <% } %>
+                        <form
+                            class="space-y-4 md:space-y-4"
+                            action="/signup"
+                            method="POST"
+                            onsubmit="return validatePasswords()"
+                        >
+                            <div>
+                                <label
+                                    for="username"
+                                    class="block mb-2 text-sm font-medium text-gray-900"
+                                    >Username:</label
+                                >
+                                <input
+                                    type="text"
+                                    id="username"
+                                    placeholder="Username"
+                                    name="username"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    class="block mb-2 text-sm font-medium text-gray-900"
+                                    for="password"
+                                    >Password:</label
+                                >
+                                <input
+                                    type="password"
+                                    id="password"
+                                    placeholder="••••••••"
+                                    name="password"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    class="block mb-2 text-sm font-medium text-gray-900"
+                                    for="confirmPassword"
+                                    >Confirm Password:</label
+                                >
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    placeholder="••••••••"
+                                    name="confirmPassword"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                                    required
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            >
+                                Sign Up
+                            </button>
+                            <p class="text-sm font-light text-gray-500">
+                                Already have an account?
+                                <a
+                                    href="/login"
+                                    class="font-medium text-primary-600 hover:underline"
+                                    >Sign in</a
+                                >
+                            </p>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required />
-            </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required />
-            </div>
-            <div>
-                <label for="confirmPassword">Confirm Password:</label>
-                <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    required
-                />
-            </div>
-            <button type="submit">Sign Up</button>
-        </form>
-        <p>
-            Already have an account?
-            <a href="/login"> Sign in </a>
-        </p>
+        </section>
         <script>
             function validatePasswords() {
                 const password = document.getElementById('password').value;

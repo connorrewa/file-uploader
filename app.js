@@ -21,6 +21,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'uploads')));
 
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Initialize session with Prisma session store
 app.use(
     session({
@@ -83,7 +86,7 @@ passport.deserializeUser(async (id, done) => {
 });
 
 app.get('/', (req, res) => {
-    res.redirect('/login');
+    res.redirect('/files');
 });
 
 app.use(router);

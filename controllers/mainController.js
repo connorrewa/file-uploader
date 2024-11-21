@@ -7,13 +7,13 @@ const fs = require('fs');
 // Controller for rendering the sign-in page
 exports.getLoginPage = (req, res) => {
     const errorMessage = req.query.error || ''; // Retrieve error message from query parameter
-    res.render('signin', { errorMessage });
+    res.render('signin', { errorMessage, currentUser: null });
 };
 
 // Controller for rendering the sign-up page
 exports.getSignupPage = (req, res) => {
     const errorMessage = req.query.error || '';
-    res.render('signup', { errorMessage });
+    res.render('signup', { errorMessage, currentUser: null });
 };
 
 // Controller for handling the sign-up process
