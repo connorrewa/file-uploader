@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/css/tailwind.css" rel="stylesheet" />
+        <title>About</title>
+    </head>
+    <body class="font-body min-h-screen flex flex-col bg-gray-50">
+        <%- include('partials/navbar', { currentUser: currentUser }) %>
+        <section class="flex-grow max-w-screen-xl mx-auto">
+            <div class="mx-auto px-6 py-8">
+                <h1 class="text-2xl font-bold text-gray-900">
+                    About My Storage
+                </h1>
+                <p class="mt-4 text-gray-700">
+                    My Storage is an authenticated file uploader that allows
+                    users to securely store any type of file. It supports folder
+                    creation and organization, making it easy to manage and
+                    categorize files. Users can also download their files
+                    effortlessly.
+                </p>
+                <p class="mt-4 text-gray-700">Key Features:</p>
+                <ul class="list-disc list-inside mt-2 text-gray-700">
+                    <li>Secure file storage with user authentication</li>
+                    <li>Folder support for better file organization</li>
+                    <li>Easy file upload and download</li>
+                </ul>
+            </div>
+        </section>
+    </body>
+</html>

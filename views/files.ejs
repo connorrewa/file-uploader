@@ -4,87 +4,260 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="/css/tailwind.css" rel="stylesheet" />
+        <script
+            src="https://kit.fontawesome.com/119d85fe28.js"
+            crossorigin="anonymous"
+        ></script>
 
-        <title>File Management</title>
+        <title>My Storage</title>
     </head>
-    <body>
-        <h1>
-            <% if (currentFolder) { %> Files in <%= currentFolder.name %> <% }
-            else { %> Your files <% } %>
-        </h1>
 
-        <!-- Create Folder Form -->
-        <form action="/files/create-folder" method="POST">
-            <input
-                type="text"
-                name="name"
-                placeholder="Enter folder name"
-                required
-            />
-            <input
-                type="hidden"
-                name="parentFolderId"
-                value="<%= currentFolder ? currentFolder.id : '' %>"
-            />
-            <button type="submit">Create Folder</button>
-        </form>
-
-        <!-- Upload File Form -->
-        <form
-            action="/files/upload"
-            method="POST"
-            enctype="multipart/form-data"
-        >
-            <input type="file" name="file" required />
-            <input
-                type="hidden"
-                name="folderId"
-                value="<%= currentFolder ? currentFolder.id : '' %>"
-            />
-            <button type="submit">Upload File</button>
-        </form>
-
-        <ul>
-            <% folders.forEach(function(folder) { %>
-            <li>
-                <a
-                    href="/files/<%= folder.parentFolderId ? folder.parentFolderId + '/' + folder.id : folder.id %>"
+    <body class="font-body">
+        <%- include('partials/navbar') %>
+        <section class="bg-gray-50">
+            <div
+                class="flex flex-col md:items-center px-6 py-8 mx-auto h-screen lg:py-4w-full"
+            >
+                <div
+                    class="w-full bg-white rounded-lg shadow dark:border max-w-screen-xl xl:p-0"
                 >
-                    <%= folder.name %>
-                </a>
-                <!-- Add a delete button for each folder -->
-                <form
-                    action="/files/delete/<%= folder.id %>"
-                    method="POST"
-                    style="display: inline"
-                >
-                    <input type="hidden" name="_method" value="DELETE" />
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-            <% }) %>
-        </ul>
+                    <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                        <% if (currentFolder) { %>
+                        <div class="flex flex-row justify-between">
+                            <a href="/files/<%= currentFolder.parentFolderId %>"
+                                ><i class="fa-solid fa-arrow-left fa-xl"></i
+                            ></a>
 
-        <!-- Display Files in the Current Folder -->
-        <h2>Files:</h2>
-        <ul>
-            <% files.forEach(function(file) { %>
-            <li>
-                <a href="/files/details/<%= file.id %>"><%= file.name %></a>
-                <!-- Add a delete button for each file -->
-                <form
-                    action="/files/delete-file/<%= file.id %>"
-                    method="POST"
-                    style="display: inline"
-                >
-                    <input type="hidden" name="_method" value="DELETE" />
-                    <button type="submit">Delete</button>
-                </form>
-            </li>
-            <% }) %>
-        </ul>
+                            <h1
+                                class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center"
+                            >
+                                Files in <%= currentFolder.name %> %>
+                            </h1>
+                            <div></div>
+                        </div>
+                        <% } else { %>
+                        <h1
+                            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center py-2"
+                        >
+                            <%= currentUser.username %>'s Files
+                        </h1>
+                        <% } %>
 
-        <br />
-        <a href="/">Go to Home</a>
+                        <ul class="my-4 space-y-3">
+                            <li
+                                class="border border-gray-200 p-2 rounded-lg gap-2 flex flex-col"
+                            >
+                                <button
+                                    type="button"
+                                    data-collapse-toggle="folderInput"
+                                    class="w-full flex items-center justify-left gap-2"
+                                >
+                                    <span>+</span>
+                                    <i class="fa-solid fa-folder"></i>
+                                    <span>New folder</span>
+                                </button>
+                                <form
+                                    class="hidden space-y-2 m-2"
+                                    action="/files/create-folder"
+                                    method="POST"
+                                    id="folderInput"
+                                >
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        placeholder="Enter folder name..."
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2"
+                                        required
+                                    />
+
+                                    <input
+                                        type="hidden"
+                                        name="parentFolderId"
+                                        value="<%= currentFolder ? currentFolder.id : '' %>"
+                                    />
+                                    <button
+                                        type="submit"
+                                        class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                    >
+                                        Create folder
+                                    </button>
+                                </form>
+                            </li>
+                            <li
+                                class="border border-gray-200 p-2 rounded-lg gap-2 flex flex-col"
+                            >
+                                <button
+                                    type="button"
+                                    data-collapse-toggle="fileInput"
+                                    class="w-full flex items-center justify-left gap-2"
+                                >
+                                    <span>+</span>
+                                    <i class="fa-regular fa-file mr-1"></i>
+                                    <span>Upload file</span>
+                                </button>
+                                <form
+                                    action="/files/upload"
+                                    method="POST"
+                                    enctype="multipart/form-data"
+                                    id="fileInput"
+                                    class="hidden"
+                                >
+                                    <button
+                                        class="cursor-pointer text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center m-2"
+                                    >
+                                        <label
+                                            for="chooseFile"
+                                            class="cursor-pointer"
+                                        >
+                                            Choose file
+                                        </label>
+                                    </button>
+
+                                    <input
+                                        type="file"
+                                        name="file"
+                                        id="chooseFile"
+                                        required
+                                        class="hidden"
+                                    />
+
+                                    <input
+                                        type="hidden"
+                                        name="folderId"
+                                        value="<%= currentFolder ? currentFolder.id : '' %>"
+                                    />
+                                </form>
+                            </li>
+                            <hr
+                                class="!my-6 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10"
+                            />
+
+                            <% folders.forEach(function(folder) { %>
+                            <li
+                                class="w-full flex items-center justify-left p-2 px-4 pl-6 border border-gray-200 rounded-lg gap-4"
+                            >
+                                <a
+                                    class="w-full space-x-2"
+                                    href="/files/<%= folder.parentFolderId ? folder.parentFolderId + '/' + folder.id : folder.id %>"
+                                >
+                                    <i class="fa-solid fa-folder"></i>
+                                    <span><%= folder.name %></span>
+                                </a>
+                                <!-- Add a delete button for each folder -->
+                                <form
+                                    action="/files/delete/<%= folder.id %>"
+                                    method="POST"
+                                    style="display: inline"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_method"
+                                        value="DELETE"
+                                    />
+                                    <button
+                                        type="submit"
+                                        data-collapse-toggle="deleteConfirm"
+                                    >
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        id="deleteConfirm"
+                                        class="z-10 hidden bg-gray-50 divide-y divide-gray-100 rounded-lg shadow w-44"
+                                    >
+                                        <div
+                                            class="py-2 text-sm text-gray-700"
+                                            aria-labelledby="dropdownDefaultButton"
+                                        >
+                                            <p
+                                                class="block px-4 py-2 hover:bg-gray-100"
+                                            >
+                                                Delete
+                                            </p>
+                                        </div>
+                                    </button>
+                                </form>
+                            </li>
+                            <% }) %> <% files.forEach(function(file) { %>
+                            <li
+                                class="w-full flex items-center justify-left p-2 px-4 pl-6 border border-gray-200 rounded-lg gap-4"
+                            >
+                                <a
+                                    class="w-full space-x-2"
+                                    href="/files/details/<%= file.id %>"
+                                >
+                                    <i class="fa-regular fa-file"></i>
+                                    <span><%= file.name %></span></a
+                                >
+                                <!-- Add a delete button for each file -->
+                                <form
+                                    action="/files/delete-file/<%= file.id %>"
+                                    method="POST"
+                                    style="display: inline"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="_method"
+                                        value="DELETE"
+                                    />
+                                    <button type="submit">
+                                        <i class="fa-solid fa-trash"> </i>
+                                    </button>
+                                </form>
+                            </li>
+                            <% }) %>
+                        </ul>
+
+                        <br />
+                        <% if (currentFolder) { %>
+                        <button
+                            class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                        >
+                            <a href="/files">Go to home folder</a>
+                        </button>
+
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </section>
     </body>
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleFolder = document.querySelector(
+            '[data-collapse-toggle="folderInput"]'
+        );
+        const folderInput = document.getElementById('folderInput');
+
+        toggleFolder.addEventListener('click', function () {
+            folderInput.classList.toggle('hidden');
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleFile = document.querySelector(
+            '[data-collapse-toggle="fileInput"]'
+        );
+        const fileInput = document.getElementById('fileInput');
+
+        toggleFile.addEventListener('click', function () {
+            fileInput.classList.toggle('hidden');
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleDelete = document.querySelector(
+            '[data-collapse-toggle="deleteConfirm"]'
+        );
+        const deleteConfirm = document.getElementById('deleteConfirm');
+
+        toggleDelete.addEventListener('click', function () {
+            deleteConfirm.classList.toggle('hidden');
+            deleteConfirm.classList.toggle('absolute');
+        });
+    });
+    document.getElementById('chooseFile').onchange = function () {
+        document.getElementById('fileInput').submit();
+    };
+</script>

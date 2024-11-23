@@ -18,11 +18,12 @@ module.exports = {
                     950: '#172554',
                 },
             },
-        },
-        fontFamily: {
-            sans: ['ui-sans-serif', 'system-ui'],
-            serif: ['ui-serif', 'Georgia'],
-            mono: ['ui-monospace', 'SFMono-Regular'],
+            fontFamily: {
+                body: ['ui-sans-serif', 'system-ui'], // Define the font-body class
+                sans: ['ui-sans-serif', 'system-ui'],
+                serif: ['ui-serif', 'Georgia'],
+                mono: ['ui-monospace', 'SFMono-Regular'],
+            },
         },
     },
     variants: {

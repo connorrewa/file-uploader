@@ -35,6 +35,9 @@ router.post('/login', controller.loginUser); // Handle login
 router.get('/logout', controller.logoutUser);
 
 // File routes
+router.get('/about', (req, res) => {
+    res.render('about');
+});
 
 // Route to create a new folder
 router.post(

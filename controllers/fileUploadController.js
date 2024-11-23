@@ -49,7 +49,12 @@ exports.viewFiles = async (req, res) => {
         });
 
         // Render the template with folders, files, and current folder data
-        res.render('files', { folders, files: uploadedFiles, currentFolder });
+        res.render('files', {
+            folders,
+            files: uploadedFiles,
+            currentFolder,
+            currentUser: req.user,
+        });
     } catch (error) {
         console.error('Error fetching files and folders:', error);
         res.status(500).json({ error: 'Failed to retrieve files and folders' });
@@ -76,7 +81,7 @@ exports.createFolder = async (req, res) => {
                 parentFolderId: parentFolderIdInt,
             },
         });
-        res.redirect('/files');
+        res.redirect('back');
     } catch (error) {
         console.error('Error creating folder:', error);
         res.status(500).json({ error: 'Failed to create folder' });
@@ -197,7 +202,7 @@ exports.deleteFolder = async (req, res) => {
             where: { id: Number(folderId) },
         });
 
-        res.redirect('/files');
+        res.redirect('back');
     } catch (error) {
         console.error('Error deleting folder:', error);
         res.status(500).json({ error: 'Failed to delete folder' });
@@ -225,7 +230,7 @@ exports.deleteFile = async (req, res) => {
             where: { id: Number(fileId) },
         });
 
-        res.redirect(`/files/${file.folderId || ''}`);
+        res.redirect('back');
     } catch (error) {
         console.error('Error deleting file:', error);
     }
@@ -273,7 +278,7 @@ exports.uploadFile = async (req, res) => {
                 // Clean up the local file after uploading to Cloudinary
                 fs.unlinkSync(file.path);
 
-                res.redirect(`/files/${folderId || ''}`);
+                res.redirect('back');
             }
         );
     } catch (error) {

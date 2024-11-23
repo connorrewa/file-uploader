@@ -27,7 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Initialize session with Prisma session store
 app.use(
     session({
-        secret: 'cats', // Provide the secret option here
+        secret: process.env.SESSION_SECRET, // Provide the secret option here
         resave: false,
         saveUninitialized: false,
         store: new PrismaSessionStore(prisma, {
@@ -87,6 +87,12 @@ passport.deserializeUser(async (id, done) => {
 
 app.get('/', (req, res) => {
     res.redirect('/files');
+});
+
+// Middleware to set currentUser in response locals
+app.use((req, res, next) => {
+    res.locals.currentUser = req.user || null;
+    next();
 });
 
 app.use(router);
