@@ -4,9 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch app.js",
-    "build": "node app.js",
+    "start": "node app.js",
     "build:css": "tailwindcss -i ./public/css/styles.css -o ./public/css/tailwind.css",
     "watch:css": "tailwindcss -i ./public/css/styles.css -o ./public/css/tailwind.css --watch",
     "migrate": "prisma migrate deploy"
