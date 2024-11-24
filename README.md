@@ -2,7 +2,7 @@
 
 A file storage service built with EJS, Tailwind, Express.js, and Prisma ORM. The service allows users to create an account to securely manage their folders and files. Data is stored with postgreSQL and linked to cloudinary for secure file access.
 
-Link to deployment: https://connors-file-uploader.up.railway.app
+Link to deployment: https://connors-file-uploader.up.railway.app/signup
 
 ## Features
 
