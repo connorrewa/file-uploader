@@ -25,7 +25,7 @@ exports.signupUser = async (req, res) => {
         await prisma.user.create({
             data: { username, password: hashedPassword },
         });
-        res.redirect('/login');
+        this.loginUser(req, res);
     } catch (error) {
         console.error(error);
         res.status(500).send('Error signing up. Please try again.');
