@@ -27,8 +27,9 @@ exports.signupUser = async (req, res) => {
         });
         this.loginUser(req, res);
     } catch (error) {
+        errorMessage = error;
+        res.redirect('signup?error=User%20already%20exists');
         console.error(error);
-        res.status(500).send('Error signing up. Please try again.');
     }
 };
 
