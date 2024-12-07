@@ -157,7 +157,10 @@ exports.getSharedFolder = async (req, res) => {
                 id: null,
                 name: 'Root',
                 files: await prisma.file.findMany({
-                    where: { folderId: null },
+                    where: {
+                        folderId: null,
+                        userId: sharedFolder.userId,
+                    },
                 }),
                 subfolders: [], // No subfolders for root
             };
