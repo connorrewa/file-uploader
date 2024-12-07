@@ -97,7 +97,35 @@ exports.shareFolder = async (req, res) => {
         res.redirect(`/share/${sharedFolder.id}`);
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error sharing folder');
+        res.status(500).render('error', { message: 'Error sharing folder' });
+    }
+};
+
+// Controller for rendering the shared folders page
+exports.getSharedFoldersPage = async (req, res) => {
+    try {
+        const sharedFolders = await prisma.sharedFolder.findMany({
+            where: { userId: req.user.id },
+            include: { folder: true },
+        });
+
+        const sharedFoldersData = sharedFolders.map((sharedFolder) => ({
+            id: sharedFolder.id,
+            folderName: sharedFolder.folder
+                ? sharedFolder.folder.name
+                : `${req.user.username}'s Home Folder`,
+            expiresAt: sharedFolder.expiresAt,
+        }));
+
+        res.render('sharedFolders', {
+            sharedFolders: sharedFoldersData,
+            currentUser: req.user,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).render('error', {
+            message: 'Error fetching shared folders',
+        });
     }
 };
 
@@ -159,7 +187,7 @@ exports.getSharedFolder = async (req, res) => {
         } else {
             folder = {
                 id: null,
-                name: `${user.username}'s Shared Folder`,
+                name: `${user.username}'s Home Folder`,
                 files: await prisma.file.findMany({
                     where: {
                         folderId: null,

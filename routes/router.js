@@ -90,6 +90,8 @@ router.get('/share-folder/:folderId?', isAuthenticated, (req, res) => {
 router.post('/share-folder', isAuthenticated, controller.shareFolder);
 router.get('/share/:id', controller.getSharedFolder);
 
+router.get('/shared-folders', isAuthenticated, controller.getSharedFoldersPage);
+
 // Session test routes
 router.get('/set-session', controller.setSessionData);
 router.get('/get-session', controller.getSessionData);

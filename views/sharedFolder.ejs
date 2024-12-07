@@ -20,11 +20,28 @@
                     class="w-full bg-white rounded-lg shadow dark:border max-w-screen-xl xl:p-0"
                 >
                     <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                        <h1
-                            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center py-2"
-                        >
-                            <%= folder.name %>
-                        </h1>
+                        <div class="flex flex-row justify-between items-center">
+                            <div></div>
+
+                            <h1
+                                class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center py-2"
+                            >
+                                <%= folder.name %>
+                            </h1>
+
+                            <div>
+                                <button
+                                    id="copyButton"
+                                    class="text-white self-end bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                >
+                                    <span id="default-message">Copy Link</span>
+                                    <span id="success-message" class="hidden">
+                                        Copied!
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
                         <ul class="my-4 space-y-3">
                             <% folder.files.forEach(function(file) { %>
                             <li
@@ -46,3 +63,28 @@
         </section>
     </body>
 </html>
+
+<script>
+    document
+        .getElementById('copyButton')
+        .addEventListener('click', function () {
+            navigator.clipboard
+                .writeText(window.location.href)
+                .then(function () {
+                    document
+                        .getElementById('default-message')
+                        .classList.add('hidden');
+                    document
+                        .getElementById('success-message')
+                        .classList.remove('hidden');
+                    setTimeout(function () {
+                        document
+                            .getElementById('default-message')
+                            .classList.remove('hidden');
+                        document
+                            .getElementById('success-message')
+                            .classList.add('hidden');
+                    }, 2000);
+                });
+        });
+</script>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/css/tailwind.css" rel="stylesheet" />
+        <script
+            src="https://kit.fontawesome.com/119d85fe28.js"
+            crossorigin="anonymous"
+        ></script>
+        <title>My Shared Folders</title>
+    </head>
+    <body class="font-body">
+        <%- include('partials/navbar', { currentUser: currentUser }) %>
+        <section class="bg-gray-50">
+            <div
+                class="flex flex-col md:items-center px-6 py-8 mx-auto h-screen lg:py-4 w-full min-w-[390px]"
+            >
+                <div
+                    class="w-full bg-white rounded-lg shadow dark:border max-w-screen-xl xl:p-0"
+                >
+                    <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                        <h1
+                            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center"
+                        >
+                            My Shared Folders
+                        </h1>
+                        <ul class="my-4 space-y-3">
+                            <% sharedFolders.forEach(function(sharedFolder) {
+                            const expiresAt = new Date(sharedFolder.expiresAt);
+                            const options = { year: 'numeric', month: 'short',
+                            day: 'numeric' }; const formattedDate =
+                            isNaN(expiresAt) ? 'No Expiry' :
+                            expiresAt.toLocaleDateString('en-US', options); %>
+                            <li
+                                class="w-full flex items-center justify-between p-2 px-4 pl-6 border border-gray-200 rounded-lg gap-4"
+                            >
+                                <div class="flex items-center gap-4">
+                                    <i class="fa-solid fa-folder"></i>
+                                    <a
+                                        href="/share/<%= sharedFolder.id %>"
+                                        class="hover:underline"
+                                    >
+                                        <%= sharedFolder.folderName %>
+                                    </a>
+                                </div>
+                                <div>
+                                    <span
+                                        >Expires On: <%= formattedDate %></span
+                                    >
+                                </div>
+                            </li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

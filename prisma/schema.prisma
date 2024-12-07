@@ -39,7 +39,7 @@ model Folder {
   parentFolder   Folder?         @relation("Subfolders", fields: [parentFolderId], references: [id])
   subfolders     Folder[]        @relation("Subfolders")
   files          File[]
-  sharedFolder   SharedFolder?   @relation
+  sharedFolders  SharedFolder[]  // Change to one-to-many relation
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 }
@@ -58,8 +58,8 @@ model File {
 
 model SharedFolder {
   id        String   @id @default(uuid())
-  folderId  Int?     @unique
-  folder    Folder?  @relation(fields: [folderId], references: [id])
+  folderId  Int      
+  folder    Folder   @relation(fields: [folderId], references: [id])
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   expiresAt DateTime

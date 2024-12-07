@@ -47,13 +47,15 @@
                         </div>
                         <% } else { %>
                         <div class="flex flex-row justify-between items-center">
-                            <div></div>
+                            <div class="flex-grow">
+                                <!-- Empty div to balance the layout -->
+                            </div>
                             <h1
-                                class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center py-2"
+                                class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center"
                             >
                                 <%= currentUser.username %>'s Files
                             </h1>
-                            <div>
+                            <div class="flex-grow flex justify-end">
                                 <button
                                     class="text-white self-end bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                 >
@@ -165,11 +167,14 @@
                                     href="/files/<%= folder.parentFolderId ? folder.parentFolderId + '/' + folder.id : folder.id %>"
                                 >
                                     <i class="fa-solid fa-folder"></i>
-                                    <span><%= folder.name %></span>
+                                    <span class="hover:underline"
+                                        ><%= folder.name %></span
+                                    >
                                 </a>
                                 <!-- Add a delete button for each folder -->
                                 <form
                                     action="/files/delete/<%= folder.id %>"
+                                    s
                                     method="POST"
                                     style="display: inline"
                                 >
@@ -185,7 +190,7 @@
                             </li>
                             <% }) %> <% files.forEach(function(file) { %>
                             <li
-                                class="w-full flex items-center justify-left p-2 px-4 pl-6 border border-gray-200 rounded-lg gap-4"
+                                class="w-full flex items-center justify-left p-2 px-4 pl-6 border border-gray-200 rounded-lg gap-4 hover:underline"
                             >
                                 <a
                                     class="w-full space-x-2"
