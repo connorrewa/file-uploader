@@ -30,16 +30,17 @@ model Session {
 }
 
 model Folder {
-  id             Int      @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   name           String
   userId         Int
-  user           User     @relation(fields: [userId], references: [id])
-  parentFolderId Int?     // optional
-  parentFolder   Folder?  @relation("Subfolders", fields: [parentFolderId], references: [id])
-  subfolders     Folder[] @relation("Subfolders")
+  user           User            @relation(fields: [userId], references: [id])
+  parentFolderId Int?            // optional
+  parentFolder   Folder?         @relation("Subfolders", fields: [parentFolderId], references: [id])
+  subfolders     Folder[]        @relation("Subfolders")
   files          File[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  sharedFolder   SharedFolder?   @relation
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 }
 
 model File {
@@ -51,5 +52,13 @@ model File {
   userId    Int
   user      User     @relation(fields: [userId], references: [id])
   url       String
+  createdAt DateTime @default(now())
+}
+
+model SharedFolder {
+  id        String   @id @default(uuid())
+  folderId  Int?     @unique
+  folder    Folder?  @relation(fields: [folderId], references: [id])
+  expiresAt DateTime
   createdAt DateTime @default(now())
 }

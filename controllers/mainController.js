@@ -3,6 +3,7 @@ const passport = require('passport');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 
 // Controller for rendering the sign-in page
 exports.getLoginPage = (req, res) => {
@@ -76,5 +77,94 @@ exports.getSessionData = (req, res) => {
         res.send(`Session data: ${req.session.username}`);
     } else {
         res.send('No session data found.');
+    }
+};
+
+// Controller for sharing a folder
+exports.shareFolder = async (req, res) => {
+    const { folderId, duration } = req.body;
+    const expiresAt = new Date(Date.now() + duration * 24 * 60 * 60 * 1000); // duration in days
+
+    try {
+        const sharedFolder = await prisma.sharedFolder.create({
+            data: {
+                id: uuidv4(),
+                folderId: folderId ? parseInt(folderId) : null, // Handle root folder case
+                expiresAt,
+            },
+        });
+        res.redirect(`/share/${sharedFolder.id}`);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error sharing folder');
+    }
+};
+
+// Helper function to get folder hierarchy
+async function getFolderHierarchy(folderId) {
+    const folder = await prisma.folder.findUnique({
+        where: { id: folderId },
+        include: {
+            files: true,
+            subfolders: {
+                include: {
+                    files: true,
+                    subfolders: true,
+                },
+            },
+        },
+    });
+
+    if (!folder) {
+        return null;
+    }
+
+    const subfolders = await Promise.all(
+        folder.subfolders.map(async (subfolder) => {
+            return await getFolderHierarchy(subfolder.id);
+        })
+    );
+
+    return {
+        ...folder,
+        subfolders,
+    };
+}
+
+// Controller for accessing a shared folder
+exports.getSharedFolder = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const sharedFolder = await prisma.sharedFolder.findUnique({
+            where: { id },
+            include: { folder: true },
+        });
+
+        if (!sharedFolder || sharedFolder.expiresAt < new Date()) {
+            return res.status(404).send('Shared folder not found or expired');
+        }
+
+        let folder;
+        if (sharedFolder.folderId) {
+            folder = await prisma.folder.findUnique({
+                where: { id: sharedFolder.folderId },
+                include: { files: true },
+            });
+        } else {
+            folder = {
+                id: null,
+                name: 'Root',
+                files: await prisma.file.findMany({
+                    where: { folderId: null },
+                }),
+                subfolders: [], // No subfolders for root
+            };
+        }
+
+        res.render('sharedFolder', { folder });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error accessing shared folder');
     }
 };

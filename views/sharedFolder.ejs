@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="/css/tailwind.css" rel="stylesheet" />
+        <title>Shared Folder</title>
+    </head>
+    <body class="font-body">
+        <%- include('partials/navbar', { currentUser: currentUser }) %>
+        <section class="bg-gray-50">
+            <div class="container mx-auto py-8">
+                <h1 class="text-2xl font-bold">
+                    Shared Folder: <%= folder.name %>
+                </h1>
+                <div class="mt-4">
+                    <h2 class="text-xl font-semibold">Files</h2>
+                    <ul>
+                        <% folder.files.forEach(file => { %>
+                        <li><a href="<%= file.url %>"><%= file.name %></a></li>
+                        <% }) %>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>

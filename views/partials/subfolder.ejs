@@ -1,0 +1,11 @@
+<% (subfolder.subfolders || []).forEach(sub => { %>
+<li>
+    <h4 class="text-md font-semibold"><%= sub.name %></h4>
+    <ul>
+        <% (sub.files || []).forEach(file => { %>
+        <li><a href="<%= file.url %>"><%= file.name %></a></li>
+        <% }) %>
+    </ul>
+    <%- include('partials/subfolder', { subfolder: sub }) %>
+</li>
+<% }) %>

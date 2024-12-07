@@ -11,6 +11,7 @@ Link to deployment: https://connors-file-uploader.up.railway.app/signup
 -   Secure file upload and download
 -   Responsive UI
 -   Persistent sessions
+-   **New**: Share folders with a link
 
 ## Technologies Used:
 

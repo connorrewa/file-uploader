@@ -81,6 +81,15 @@ router.get(
 // Express route to handle nested folder paths
 router.get('/files/*', isAuthenticated, fileUploadController.getFolder);
 
+router.get('/share-folder/:folderId?', isAuthenticated, (req, res) => {
+    const folderId = req.params.folderId || null;
+    res.render('shareNewFolder', {
+        folder: { id: folderId, name: 'Current Folder' },
+    });
+});
+router.post('/share-folder', isAuthenticated, controller.shareFolder);
+router.get('/share/:id', controller.getSharedFolder);
+
 // Session test routes
 router.get('/set-session', controller.setSessionData);
 router.get('/get-session', controller.getSessionData);
