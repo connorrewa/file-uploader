@@ -88,6 +88,7 @@ exports.shareFolder = async (req, res) => {
     try {
         const sharedFolder = await prisma.sharedFolder.create({
             data: {
+                userId: req.user.id,
                 id: uuidv4(),
                 folderId: folderId ? parseInt(folderId) : null, // Handle root folder case
                 expiresAt,

@@ -20,6 +20,7 @@ model User {
   createdAt DateTime @default(now())
   Folder    Folder[]
   File      File[]
+  SharedFolder  SharedFolder[]
 }
 
 model Session {
@@ -59,6 +60,8 @@ model SharedFolder {
   id        String   @id @default(uuid())
   folderId  Int?     @unique
   folder    Folder?  @relation(fields: [folderId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
