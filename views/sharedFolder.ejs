@@ -4,22 +4,43 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link href="/css/tailwind.css" rel="stylesheet" />
+        <script
+            src="https://kit.fontawesome.com/119d85fe28.js"
+            crossorigin="anonymous"
+        ></script>
         <title>Shared Folder</title>
     </head>
     <body class="font-body">
         <%- include('partials/navbar', { currentUser: currentUser }) %>
         <section class="bg-gray-50">
-            <div class="container mx-auto py-8">
-                <h1 class="text-2xl font-bold">
-                    Shared Folder: <%= folder.name %>
-                </h1>
-                <div class="mt-4">
-                    <h2 class="text-xl font-semibold">Files</h2>
-                    <ul>
-                        <% folder.files.forEach(file => { %>
-                        <li><a href="<%= file.url %>"><%= file.name %></a></li>
-                        <% }) %>
-                    </ul>
+            <div
+                class="flex flex-col md:items-center px-6 py-8 mx-auto h-screen lg:py-4 w-full"
+            >
+                <div
+                    class="w-full bg-white rounded-lg shadow dark:border max-w-screen-xl xl:p-0"
+                >
+                    <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                        <h1
+                            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center py-2"
+                        >
+                            <%= folder.name %>
+                        </h1>
+                        <ul class="my-4 space-y-3">
+                            <% folder.files.forEach(function(file) { %>
+                            <li
+                                class="w-full flex items-center justify-left p-2 px-4 pl-6 border border-gray-200 rounded-lg gap-4"
+                            >
+                                <a
+                                    class="w-full space-x-2"
+                                    href="<%= file.url %>"
+                                >
+                                    <i class="fa-regular fa-file"></i>
+                                    <span><%= file.name %></span>
+                                </a>
+                            </li>
+                            <% }) %>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </section>

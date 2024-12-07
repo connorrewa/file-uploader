@@ -16,14 +16,14 @@
         <%- include('partials/navbar') %>
         <section class="bg-gray-50">
             <div
-                class="flex flex-col md:items-center px-6 py-8 mx-auto h-screen lg:py-4w-full"
+                class="flex flex-col md:items-center px-6 py-8 mx-auto h-screen lg:py-4 w-full min-w-[390px]"
             >
                 <div
                     class="w-full bg-white rounded-lg shadow dark:border max-w-screen-xl xl:p-0"
                 >
                     <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <% if (currentFolder) { %>
-                        <div class="flex flex-row justify-between">
+                        <div class="flex flex-row justify-between items-center">
                             <a href="/files/<%= currentFolder.parentFolderId %>"
                                 ><i class="fa-solid fa-arrow-left fa-xl"></i
                             ></a>
@@ -33,14 +33,38 @@
                             >
                                 Files in <%= currentFolder.name %> %>
                             </h1>
-                            <div></div>
+                            <div>
+                                <button
+                                    class="text-white self-end bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                >
+                                    <a
+                                        href="/share-folder/<%= currentFolder ? currentFolder.id : '' %>"
+                                    >
+                                        Share Folder
+                                    </a>
+                                </button>
+                            </div>
                         </div>
                         <% } else { %>
-                        <h1
-                            class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center py-2"
-                        >
-                            <%= currentUser.username %>'s Files
-                        </h1>
+                        <div class="flex flex-row justify-between items-center">
+                            <div></div>
+                            <h1
+                                class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl text-center py-2"
+                            >
+                                <%= currentUser.username %>'s Files
+                            </h1>
+                            <div>
+                                <button
+                                    class="text-white self-end bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                >
+                                    <a
+                                        href="/share-folder/<%= currentFolder ? currentFolder.id : '' %>"
+                                    >
+                                        Share Folder
+                                    </a>
+                                </button>
+                            </div>
+                        </div>
                         <% } %>
 
                         <ul class="my-4 space-y-3">
@@ -190,38 +214,16 @@
                         </ul>
 
                         <br />
-                        <% if (currentFolder) { %>
-                        <button
-                            class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                        >
-                            <a href="/files">Go to home folder</a>
-                        </button>
+                        <div class="flex space-apart">
+                            <% if (currentFolder) { %>
+                            <button
+                                class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                            >
+                                <a href="/files">Go to home folder</a>
+                            </button>
 
-                        <% } %>
-                    </div>
-                    <form action="/share-folder" method="POST">
-                        <input
-                            type="hidden"
-                            name="folderId"
-                            value="<%= currentFolder ? currentFolder.id : '' %>"
-                        />
-                        <label for="duration">Share Duration (days):</label>
-                        <input
-                            type="number"
-                            id="duration"
-                            name="duration"
-                            min="1"
-                            required
-                        />
-                        <button type="submit">Share Folder</button>
-                    </form>
-                    <div class="flex justify-end mt-4">
-                        <a
-                            href="/share-folder/<%= currentFolder ? currentFolder.id : '' %>"
-                            class="text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                        >
-                            Share Folder
-                        </a>
+                            <% } %>
+                        </div>
                     </div>
                 </div>
             </div>

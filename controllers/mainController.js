@@ -142,6 +142,10 @@ exports.getSharedFolder = async (req, res) => {
             include: { folder: true },
         });
 
+        const user = await prisma.user.findUnique({
+            where: { id: sharedFolder.userId },
+        });
+
         if (!sharedFolder || sharedFolder.expiresAt < new Date()) {
             return res.status(404).send('Shared folder not found or expired');
         }
@@ -155,7 +159,7 @@ exports.getSharedFolder = async (req, res) => {
         } else {
             folder = {
                 id: null,
-                name: 'Root',
+                name: `${user.username}'s Shared Folder`,
                 files: await prisma.file.findMany({
                     where: {
                         folderId: null,
